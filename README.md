@@ -5,6 +5,7 @@ This is the first version and only implements the basic functions.<br>
     DNS domain resolution is not supported and will be optimized later.<br>
     Only transfer directories and normal files are supported.<br>
     File permission synchronization is not supported.<br>
+    No signal processing.<br>
 <br>
 send_file.py parameter:<br>
   --server: server ip address<br>
