@@ -9,6 +9,59 @@ import socket
 import logging
 
 
+def get_server_ip(server_name, ip_ver, port):
+    addr_list = list()
+    server_addr_list = list()
+    ipv6 = True
+    if ip_ver == 6:
+        try:
+            server_addr_list = socket.getaddrinfo(
+                server_name,
+                port,
+                socket.AF_INET6,
+                socket.SOCK_STREAM
+            )
+        except Exception:
+            log.error(
+                "get {}'s ipv6 address error".format(
+                    server_name
+                )
+            )
+    if not server_addr_list:
+        ipv6 = False
+        server_addr_list = socket.getaddrinfo(
+            server_name,
+            port,
+            socket.AF_INET,
+            socket.SOCK_STREAM
+        )
+    for addr in server_addr_list:
+        ipaddr, l_port = addr[4][:2]
+        if (not ipv6) and ip_ver == 6:
+            ipaddr = '::ffff:' + ipaddr
+        addr_list.append((ipaddr, l_port))
+    available_addr = get_available_addr(
+        addr_list,
+        ip_ver
+    )
+    return available_addr
+
+
+def get_available_addr(addr_list, ip_ver):
+    log.debug('get available addr form: {}'.format(addr_list))
+    for addr in addr_list:
+        log.debug('try connect {}'.format(addr))
+        sockfd = get_stream_socket(ip_ver)
+        try:
+            sockfd.connect(addr)
+        except Exception:
+            log.debug('connect {} failed!'.format(addr))
+            continue
+        log.info('use address {}'.format(addr))
+        sockfd.close()
+        return addr
+
+
 def setup_logger(debug="False"):
     logger = logging.getLogger()
     logger.setLevel(logging.DEBUG)
@@ -48,13 +101,13 @@ def set_sock_opt(sockfd):
 
 
 class send_thread(threading.Thread):
-    def __init__(self, server, queue, remote_dir, name):
+    def __init__(self, server, queue, remote_dir, name, af):
         threading.Thread.__init__(self)
         self.queue = queue
         self.server = server
         self.name = name
         self.remote_dir = remote_dir
-        self.sockfd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sockfd = get_stream_socket(af)
         set_sock_opt(self.sockfd)
         self.sockfd.connect(self.server)
         self.sock_name = self.sockfd.getsockname()
@@ -163,7 +216,7 @@ class send_thread(threading.Thread):
         return result
 
 
-def send_process(server, get_queue, thread_num, remote_dir, name):
+def send_process(server, get_queue, thread_num, remote_dir, name, af):
     log.info("{} start".format(name))
     thread_list = list()
     for loop in range(0, thread_num):
@@ -172,7 +225,8 @@ def send_process(server, get_queue, thread_num, remote_dir, name):
             server,
             get_queue,
             remote_dir,
-            thread_name
+            thread_name,
+            af
         )
         thread.start()
         thread_list.append(thread)
@@ -224,8 +278,31 @@ def parse_arguments():
         type=int,
         help='Number of threads per process'
     )
+    parse.add_argument(
+        '--ip_version',
+        type=int,
+        help='Number of ip version'
+    )
     args = parse.parse_args()
     return args
+
+
+def get_stream_socket(proto_ver):
+    try:
+        if proto_ver == 6:
+            sockfd = socket.socket(
+                socket.AF_INET6,
+                socket.SOCK_STREAM
+            )
+        else:
+            sockfd = socket.socket(
+                socket.AF_INET,
+                socket.SOCK_STREAM
+            )
+    except Exception:
+        log.error('get socket descriptor error!')
+        sys.exit(1)
+    return sockfd
 
 
 def generate_queue_item(queue, files):
@@ -274,7 +351,7 @@ def init_remote_env():
     if len(f_len_str) > 6 or len(d_len_str) > 6:
         log.info('files {} too long!')
         sys.exit(1)
-    init_sockfd = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    init_sockfd = get_stream_socket(args.ip_version)
     init_sockfd.connect(server)
     sock_name = init_sockfd.getsockname()
     file_str = b'cf' + b'0' * (6 - len(f_len_str)) + f_len_str + file_data
@@ -298,7 +375,11 @@ def init_remote_env():
 if __name__ == "__main__":
     args = parse_arguments()
     log = setup_logger(debug="True")
-    server = (args.server, args.port)
+    server = get_server_ip(
+        args.server,
+        args.ip_version,
+        args.port
+    )
     args.file = args.file.strip()
     if os.path.isdir(args.file):
         log.info("{} is a directory".format(args.file))
@@ -338,7 +419,8 @@ if __name__ == "__main__":
                 server,
                 queue,
                 args.thread_num,
-                args.remote_dir, "process_{}".format(loop)
+                args.remote_dir, "process_{}".format(loop),
+                args.ip_version
             )
         )
         process.deamon = True
