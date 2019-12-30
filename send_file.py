@@ -14,6 +14,9 @@ def get_server_ip(server_name, ip_ver, port):
     server_addr_list = list()
     ipv6 = True
     if ip_ver == 6:
+        if not socket.has_ipv6:
+            log.error("Not support IPv6!")
+            sys.exit(1)
         try:
             server_addr_list = socket.getaddrinfo(
                 server_name,

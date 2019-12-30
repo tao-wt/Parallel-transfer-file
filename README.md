@@ -21,6 +21,6 @@ recv_file_file.py parameter:<br>
   --ip_ver: The ip protocol version<br>
 <br>
 examples:<br>
-  python3 send_file.py --server x.x.x.x --port xxx --file /path/file --remote_dir /remote_dir/ --process_num 21 --length 157286400<br>
+  python3 send_file.py --server x.x.x.x --port xxx --file /path/file --remote_dir /remote_dir/ --process_num 21 --length 157286400 --ip_version 6<br>
   python3 send_file.py --server x.x.x.x --port xxx --file /path/dir --remote_dir /remote_dir/ --length 1572864<br>
-  python3 recv_file.py --port xxx<br>
+  python3 recv_file.py --port xxx --ip_ver 6<br>

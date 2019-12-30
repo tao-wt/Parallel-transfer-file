@@ -237,6 +237,9 @@ if __name__ == "__main__":
         )
         addr = args.addr if args.addr else '0.0.0.0'
     else:
+        if not socket.has_ipv6:
+            log.error("Not support IPv6!")
+            sys.exit(1)
         sockfd = socket.socket(
             socket.AF_INET6,
             socket.SOCK_STREAM
