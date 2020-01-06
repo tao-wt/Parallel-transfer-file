@@ -24,3 +24,14 @@ examples:<br>
   python3 send_file.py --server x.x.x.x --port xxx --file /path/file --remote_dir /remote_dir/ --process_num 21 --length 157286400 --ip_version 6<br>
   python3 send_file.py --server x.x.x.x --port xxx --file /path/dir --remote_dir /remote_dir/ --length 1572864<br>
   python3 recv_file.py --port xxx --ip_ver 6<br>
+<br>
+network protocol<br>
++---+---+--------------+---------------------------------------<br>
+| c | d |    length    |    data    <br>
++---+---+--------------+---------------------------------------<br>
+| c | f |    length    |    data    <br>
++---+---+--------------+------------+------------+-------------<br>
+| w | f |    length    | file name  |   offset   |   size    <br>
++---+---+--------------+------------+------------+-------------<br>
+  1   1        6                          12          12   (Byte)<br>
+<br>
