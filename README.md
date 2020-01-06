@@ -27,11 +27,11 @@ examples:<br>
 <br>
 network protocol<br>
 +---+---+--------------+---------------------------------------<br>
-| c | d |    length    |    data    <br>
+|&nbspc&nbsp|&nbspd&nbsp|&nbsp&nbsp&nbsp&nbsplength&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbspdata&nbsp&nbsp&nbsp&nbsp<br>
 +---+---+--------------+---------------------------------------<br>
-| c | f |    length    |    data    <br>
+|&nbspc&nbsp|&nbspf&nbsp|&nbsp&nbsp&nbsp&nbsplength&nbsp&nbsp&nbsp&nbsp|&nbsp&nbsp&nbsp&nbspdata&nbsp&nbsp&nbsp&nbsp<br>
 +---+---+--------------+------------+------------+-------------<br>
-| w | f |    length    | file name  |   offset   |   size    <br>
+|&nbspw&nbsp|&nbspf&nbsp|&nbsp&nbsp&nbsp&nbsplength&nbsp&nbsp&nbsp&nbsp|&nbspfile&nbspname&nbsp&nbsp|&nbsp&nbsp&nbspoffset&nbsp&nbsp&nbsp|&nbsp&nbsp&nbspsize&nbsp&nbsp&nbsp&nbsp<br>
 +---+---+--------------+------------+------------+-------------<br>
-  1   1        6                          12          12   (Byte)<br>
+&nbsp&nbsp1&nbsp&nbsp&nbsp1&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp6&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp12&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp12&nbsp&nbsp&nbsp(Byte)<br>
 <br>
