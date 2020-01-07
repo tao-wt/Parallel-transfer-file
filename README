@@ -25,7 +25,7 @@ examples:
   python3 send_file.py --server x.x.x.x --port xxx --file /path/dir --remote_dir /remote_dir/ --length 1572864
   python3 recv_file.py --port xxx --ip_ver 6
 
-network protocol
+Application layer protocol:
 +---+---+--------------+---------------------------------------------------   +------+
 | c | d |    length    |    data                                              | 0/!0 |
 +---+---+--------------+---------------------------------------------------   +------+
