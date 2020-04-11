@@ -6,6 +6,7 @@ import hashlib
 import argparse
 import socket
 import logging
+import signal
 
 
 def auto_next(func):
@@ -228,6 +229,7 @@ def parse_arguments():
 
 
 if __name__ == "__main__":
+    signal.signal(signal.SIGCHLD, sigchld_handler)
     args = parse_arguments()
     log = setup_logger(debug="True")
     if args.ip_ver and args.ip_ver == 4:

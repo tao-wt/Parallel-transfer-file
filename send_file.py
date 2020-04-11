@@ -7,6 +7,7 @@ import hashlib
 import argparse
 import socket
 import logging
+import signal
 
 
 def get_server_ip(server_name, ip_ver, port):
@@ -376,6 +377,7 @@ def init_remote_env():
 
 
 if __name__ == "__main__":
+    signal.signal(signal.SIGCHLD, signal.SIG_IGN)
     args = parse_arguments()
     log = setup_logger(debug="True")
     server = get_server_ip(
@@ -386,6 +388,10 @@ if __name__ == "__main__":
     args.file = args.file.strip()
     if os.path.isdir(args.file):
         log.info("{} is a directory".format(args.file))
+        args.remote_dir = os.path.join(
+            args.remote_dir,
+            args.file.rstrip('/').split('/')[-1]
+        )
         os.chdir(args.file)
         args.file, file_data, dir_data = get_file_list()
         dir_data = bytes(args.remote_dir, encoding='utf-8') \
